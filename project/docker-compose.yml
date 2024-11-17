@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  ui-backend:
+    build:
+      context: ./ui-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ui-backend:/app
+    depends_on:
+      - ai-backend
+    networks:
+      - detection-network
+    environment:
+      - AI_SERVICE_URL=http://ai-backend:8001
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  ai-backend:
+    build:
+      context: ./ai-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./ai-backend:/app
+    networks:
+      - detection-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  detection-network:
+    driver: bridge

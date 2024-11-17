@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  ui-backend:
+    build:
+      context: ./ui-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ui-backend:/app
+    depends_on:
+      - ai-backend
+
+  ai-backend:
+    build:
+      context: ./ai-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./ai-backend:/app
